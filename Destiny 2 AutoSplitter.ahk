@@ -1,6 +1,7 @@
 #SingleInstance, Force
 #NoEnv
 #KeyHistory 0
+#InstallKeybdHook
 ListLines Off
 Process, Priority, , A
 SetBatchLines, -1
@@ -13,6 +14,7 @@ CoordMode, Mouse
 CoordMode, Pixel
 
 WinTitle := "LiveSplit"
+
 
 ; check for folders and settings files
     IfNotExist, %A_ScriptDir%\Dependencies
@@ -34,7 +36,7 @@ WinTitle := "LiveSplit"
     global hotKeySettingsArray := []
     FileRead, hotkeySettingsString, %A_ScriptDir%\Dependencies\settings.txt
     hotKeySettingsArray := StrSplit(hotkeySettingsString, "&")
-    loop, 4 
+    loop, 6 
     {
         Hotkey%A_Index% := hotKeySettingsArray[A_Index]
     }
@@ -64,6 +66,7 @@ WinTitle := "LiveSplit"
     global PercCorrectForGui:= 0
     global WhiteCorrectForGui:= 0
     global BlackCorrectForGui:= 0
+    global canPress := true
 ; ===================================================
 
 ; global declarations for split image maker
@@ -87,7 +90,7 @@ WinTitle := "LiveSplit"
     y1 := 0
     x2 := 0
     y2 := 0
-    global w =
+    global width =
     global h =
     global total = 0
     global imageCoords := "0|0|1|1"
@@ -118,36 +121,51 @@ WinTitle := "LiveSplit"
     Gui, Autosplitter: Add, GroupBox, x8 y0 w169 h282
     Gui, Autosplitter: Add, GroupBox, x218 y288 w305 h210, Hotkeys
     Gui, Autosplitter: Add, GroupBox, x530 y288 w177 h210, Controls
+    Gui, Autosplitter: Add, Text, vPausedIndicator x504 y10 w200 h20, First Input Detection: Ready
 
     tmpVar1 := hotKeySettingsArray[1]
     if (tmpVar1 != "")
         Hotkey, $%tmpVar1%, StartKeyPressed
-    Gui, Autosplitter: Add, Hotkey, x306 y320 w120 h21 vHotKey1, %tmpVar1%
+    Gui, Autosplitter: Add, Hotkey, x315 y310 w120 h21 vHotKey1, %tmpVar1%
     tmpVar1 := hotKeySettingsArray[2]
     if (tmpVar1 != "")
         Hotkey, $%tmpVar1%, ResetAutoSplitter
-    Gui, Autosplitter: Add, Hotkey, x306 y368 w120 h21 vHotKey2, %tmpVar1%
+    Gui, Autosplitter: Add, Hotkey, x315 y340 w120 h21 vHotKey2, %tmpVar1%
     tmpVar1 := hotKeySettingsArray[3]
     if (tmpVar1 != "")
         Hotkey, $%tmpVar1%, SkipSplit
-    Gui, Autosplitter: Add, Hotkey, x306 y464 w120 h21 vHotKey3, %tmpVar1%
+    Gui, Autosplitter: Add, Hotkey, x315 y370 w120 h21 vHotKey3, %tmpVar1%
     tmpVar1 := hotKeySettingsArray[4]
     if (tmpVar1 != "")
         Hotkey, $%tmpVar1%, UndoSplit
-    Gui, Autosplitter: Add, Hotkey, x306 y416 w120 h21 vHotKey4, %tmpVar1%
+    Gui, Autosplitter: Add, Hotkey, x315 y400 w120 h21 vHotKey4, %tmpVar1%
+    tmpVar1 := hotKeySettingsArray[5]
+    if (tmpVar1 != "")
+        Hotkey, $%tmpVar1%, StartInput
+    Gui, Autosplitter: Add, Hotkey, x315 y430 w120 h21 vHotKey5, %tmpVar1%
+    tmpVar1 := hotKeySettingsArray[6]
+    if (tmpVar1 != "")
+        Hotkey, $%tmpVar1%, PauseFirstInput
+    Gui, Autosplitter: Add, Hotkey, x315 y460 w120 h21 vHotKey6, %tmpVar1%
     splitButton := hotKeySettingsArray[1]
     resetButton := hotKeySettingsArray[2]
     skipButton := hotKeySettingsArray[3] 
     undoButton := hotKeySettingsArray[4]
+    startInput := hotKeySettingsArray[5]
+    pauseButton := hotKeySettingsArray[6]
 
-    Gui, Autosplitter: Add, Text, x234 y320 w59 h23 +0x200, Start/Split
-    Gui, Autosplitter: Add, Text, x234 y368 w59 h23 +0x200, Reset
-    Gui, Autosplitter: Add, Text, x234 y464 w59 h23 +0x200, Skip Split
-    Gui, Autosplitter: Add, Text, x234 y416 w59 h23 +0x200, Undo Split
-    Gui, Autosplitter: Add, Button, x442 y320 w58 h23 gSethotkeys, Set
-    Gui, Autosplitter: Add, Button, x442 y368 w58 h23 gSethotkeys, Set
-    Gui, Autosplitter: Add, Button, x442 y416 w58 h23 gSethotkeys, Set
-    Gui, Autosplitter: Add, Button, x442 y464 w58 h23 gSethotkeys, Set
+    Gui, Autosplitter: Add, Text, x225 y310 w59 h23 +0x200, Start/Split
+    Gui, Autosplitter: Add, Text, x225 y340 w59 h23 +0x200, Reset
+    Gui, Autosplitter: Add, Text, x225 y370 w59 h23 +0x200, Skip Split
+    Gui, Autosplitter: Add, Text, x225 y400 w59 h23 +0x200, Undo Split
+    Gui, Autosplitter: Add, Text, x225 y430 w59 h23 +0x200, First Input
+    Gui, Autosplitter: Add, Text, x225 y456 w84 h40 , Pause First`nInput Detection
+    Gui, Autosplitter: Add, Button, x450 y310 w58 h23 gSethotkeys, Set
+    Gui, Autosplitter: Add, Button, x450 y340 w58 h23 gSethotkeys, Set
+    Gui, Autosplitter: Add, Button, x450 y370 w58 h23 gSethotkeys, Set
+    Gui, Autosplitter: Add, Button, x450 y400 w58 h23 gSethotkeys, Set
+    Gui, Autosplitter: Add, Button, x450 y430 w58 h23 gSethotkeys, Set
+    Gui, Autosplitter: Add, Button, x450 y460 w58 h23 gSethotkeys, Set
     Gui, Autosplitter: Add, Button, x546 y432 w145 h56 gStartAutoSplitter, Start AutoSplitter
     Gui, Autosplitter: Add, Button, x546 y368 w145 h56 gStopOnlyAutoSplitter, Reset AutoSplitter
     Gui, Autosplitter: Add, Button, x618 y304 w79 h56 gSkipOnlyAutoSplitter, Skip Current`nSplit Image
@@ -191,7 +209,7 @@ WinTitle := "LiveSplit"
 
         Gui, imageMaker: Add, Button, x22 y15 w120 h50 gCapture vCapture, Freeze Screen
         Gui, imageMaker: Add, Button, x22 y15 w120 h50 gUncapture vUncapture +Hidden, Unfreeze Screen
-        tmpVar1 := hotKeySettingsArray[5]
+        tmpVar1 := hotKeySettingsArray[7]
         if (tmpVar1 != "")
             Hotkey, $%tmpVar1%, Capture
         Gui, imageMaker: Add, Hotkey, x27 y70 w110 h20 vCaptureHotkey, %tmpVar1%
@@ -339,20 +357,36 @@ Return
             hotKeySettingsArray[4] := HotKey4
             Hotkey, $%HotKey4%, UndoSplit
         }
-        if (CaptureHotkey != "") 
+        if (Hotkey5 != "") 
         {
             if (hotKeySettingsArray[5] != "")
                 Hotkey, % hotKeySettingsArray[5], off
-            hotKeySettingsArray[5] := CaptureHotkey
+            hotKeySettingsArray[5] := HotKey5          
+            Hotkey, $%HotKey5%, StartInput    
+        }
+        if (Hotkey6 != "") 
+        {
+            if (hotKeySettingsArray[6] != "")
+                Hotkey, % hotKeySettingsArray[6], off
+            hotKeySettingsArray[6] := HotKey6
+            Hotkey, $%HotKey6%, PauseFirstInput
+        }
+        if (CaptureHotkey != "") 
+        {
+            if (hotKeySettingsArray[7] != "")
+                Hotkey, % hotKeySettingsArray[7], off
+            hotKeySettingsArray[7] := CaptureHotkey
             Hotkey, $%CaptureHotkey%, Capture
         }
-        hotkeySettingsString := hotKeySettingsArray[1]"&"hotKeySettingsArray[2]"&"hotKeySettingsArray[3]"&"hotKeySettingsArray[4]"&"hotKeySettingsArray[5]
+        hotkeySettingsString := hotKeySettingsArray[1]"&"hotKeySettingsArray[2]"&"hotKeySettingsArray[3]"&"hotKeySettingsArray[4]"&"hotKeySettingsArray[5]"&"hotKeySettingsArray[6]"&"hotKeySettingsArray[7]
         FileDelete, %A_ScriptDir%\Dependencies\settings.txt
         FileAppend, %hotkeySettingsString%, %A_ScriptDir%\Dependencies\settings.txt
         splitButton := hotKeySettingsArray[1]
         resetButton := hotKeySettingsArray[2]
         skipButton := hotKeySettingsArray[3] 
         undoButton := hotKeySettingsArray[4]
+        startInput := hotKeySettingsArray[5]
+        pauseButton := hotKeySettingsArray[6]
     return
 
     OpenSplitImageMaker:
@@ -403,12 +437,32 @@ Return
         BlackCorrectForGui := 0
     Return
 
+    PauseFirstInput:
+        if (canPress) {
+            canPress := false
+            GuiControl, Autosplitter:, PausedIndicator, First Input Detection: Paused
+        }
+        else {
+            canPress := True
+            GuiControl, Autosplitter:, PausedIndicator, First Input Detection: Ready
+        }
+    return
+    
+    StartInput:
+        if (!canPress)
+            Return
+        Send, {%startInput%}
+        
     StartKeyPressed:
         Send, {%splitButton%}
+        canPress := False
+        GuiControl, Autosplitter:, PausedIndicator, First Input Detection: Splitter Running
     StartAutoSplitter:
         if (currentlyLoadedSplits[1] == "")
         {
             MsgBox, Select a split file first please
+            canPress := True
+            GuiControl, Autosplitter:, PausedIndicator, First Input Detection: Ready
             return
         }
         global currentlyLoadedSplitIndex := 1
@@ -615,9 +669,11 @@ Return
         Gdip_DisposeImage(pBitmap)
         return pCorrect
     }
-
+    
     ResetAutoSplitter:
         Send, {%resetButton%}
+        canPress := True
+        GuiControl, Autosplitter:, PausedIndicator, First Input Detection: Ready
         global breakLoop := 1
         global breakLoopLF := 1
         global currentlyLoadedSplitIndex := 999
@@ -631,6 +687,8 @@ Return
     return 
 
     StopOnlyAutoSplitter:
+        GuiControl, Autosplitter:, PausedIndicator, First Input Detection: Ready
+        canPress := True
         global breakLoop := 1
         global breakLoopLF := 1
         global currentlyLoadedSplitIndex := 999
@@ -929,7 +987,7 @@ Return
         Gdip_DisposeImage(pBitmap)
         Gui, Screenshot: -Caption
         Gui, Screenshot: Add, Picture, x0 y0, %A_ScriptDir%\Dependencies\fullScreenshot.png
-        Gui, Screenshot: show, h%A_ScreenHeight% w%A_ScreenWidth% x0 y0
+        Gui, Screenshot: show, h%A_ScreenHeight% width%A_ScreenWidth% x0 y0
         GuiControl imageMaker: +Hidden, Capture
         GuiControl imageMaker: -Hidden, Uncapture 
         Gui, imageMaker: Show
@@ -1115,23 +1173,23 @@ Return
     setImages(x1, y1, x2, y2)
     {
         global string = 
-        w := x2-x1 
-        h := y2-y1 
+        width := x2-x1 
+        height := y2-y1 
         GuiControl, imageMaker:, TopNum, %y1%
         GuiControl, imageMaker:, BotNum, %y2%
         GuiControl, imageMaker:, LeftNum, %x1%
         GuiControl, imageMaker:, RightNum, %x2%
-        imageCoords = %x1%|%y1%|%w%|%h%
+        imageCoords = %x1%|%y1%|%width%|%height%
         pBitmap1 := Gdip_BitmapFromScreen(imageCoords)
-        pBitmap2 := Gdip_CreateBitmap(w, h)
+        pBitmap2 := Gdip_CreateBitmap(width, height)
         x := 0
         y := 0
         nWhite := 0
         nBlack := 0
         total := 0
-        loop %h%
+        loop %height%
         {
-            loop %w%
+            loop %width%
             {
                 if (y != 0 || x != 0)
                 {

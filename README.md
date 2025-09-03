@@ -11,11 +11,11 @@ Certain in game settings can affect how well the autosplitter works or if it wor
 
 ## KEYBINDS
 
-To set up keybinds, open up LiveSplit and right click on it. Then, click "settings" and look at the keybinds you already have set. If any of the top 4 are not set, go ahead and do that now. Then, open the autosplitter and click on the boxes that say "none." Press the key that corresponds with the action and then click the "set" button. Repeat this process for all 4 keybinds and you should be good to go.
+To set up keybinds, open up LiveSplit and right click on it. Then, click "settings" and look at the keybinds you already have set. If any of the top 4 are not set, go ahead and do that now. Then, open the autosplitter and click on the boxes that say "none." Press the key that corresponds with the action in LiveSplit and then click the "set" button. Repeat this process for all 4 keybinds and you should be good to go. The bottom 2 are for running the autosplitter on first input and are entirely optional.
 
  ## SPLIT IMAGES
 
-The AutoSplitter works by checking a specific are o fthe screen for a certain pattern of white and non-white pixels which are determined by images you create. To create these images, click on "Open Split Image Maker." This window allows you to capture the images you'll use to split. These can be almost anything white that shows up on the screen; for example, the "New Objective" text, any text that appears in the bottom left of your screen, or the ghost under your health bar when an area becomes respawn restricted.
+The AutoSplitter works by checking a specific are of the screen for a certain pattern of white and non-white pixels which are determined by images you create. To create these images, click on "Open Split Image Maker." This window allows you to capture the images you'll use to split. These can be almost anything white that shows up on the screen; for example, the "New Objective" text, any text that appears in the bottom left of your screen, or the ghost under your health bar when an area becomes respawn restricted.
 
 To use the Split Image Maker, click the "Freeze" button (or assign a hotkey to it and press that) to take a temporary screenshot of the screen. This will make it easier to capture the image you're trying to get. Then, click "Select Area" and use your mouse to draw a rectangle around the image you want to capture. On the right, you'll see the actual image, and on the left, you'll see what the autosplitter sees (it only differentiates between white pixels and non-white pixels).
 
@@ -43,6 +43,8 @@ Now that you have everything set up, you're ready to use the autosplitter. Click
 One annoying thing about boss health bars is that they can disappear for many reasons other than actually killing the boss, such as going into your inventory or pulling out your ghost. To account for this, the autosplitter is set up to continue looking for the health bar until it finds the next split. If it sees the health bar back on the screen for 2 seconds straight, it will undo the split and wait for the health bar to disappear again. This is where dummy splits come in handy. A dummy split is exactly like a normal split, except it doesn't press the button when it finds the image. You should put one of these after boss deaths, so the splitter doesn't falsely undo the boss death split. A good image to use for this is the season rank progress one that shows up after every encounter of every dungeon and raid.
 
 While using the autosplitter, if it misses an image you can just press your skip split key and it will skip the current image and split in LiveSplit. However, if the autosplitter and LiveSplit get out of sync, you can skip and undo splits specifically in the autosplitter, as well as stop just the autosplitter but keep the timer running by using the buttons in the bottom right of the autosplitter.
+
+To use the first input timing functionality, set the 'Start Input" keybind to the first key you press in a run (probably w) and 'Pause' to any key you dont normally use. Press your pause key to prevent the splitter from starting each time you press your first input. You can see the status of the first input detection above the active splits box. You can still manually start or split while paused or running with the dedicated keybind if you wish.
 
 ## DISCORD
 
