@@ -1,7 +1,6 @@
 #SingleInstance, Force
 #NoEnv
 #KeyHistory 0
-#InstallKeybdHook
 ListLines Off
 Process, Priority, , A
 SetBatchLines, -1
